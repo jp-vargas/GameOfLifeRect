@@ -1,0 +1,16 @@
+.dead {
+    background-color: black;
+}
+
+.life {
+    background-color: white;
+}
+
+.cell {
+    display: inline-block;
+    border: 1px solid gray;
+    width: 15px;
+    height: 15px;
+    margin-left: -1px;
+    margin-bottom: -1px;
+}
