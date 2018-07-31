@@ -1,7 +1,7 @@
 /**
  * Main Container
  */
-import * as React from "react";
+import React, {Component} from "react";
 
 // components
 import Grid from "./components/Grid/Grid.js";
@@ -16,15 +16,17 @@ import {cloneObject} from "./helpers";
 const maxRows = 50;
 const maxCols = 50;
 const intervalTime = 1000;
+const maxIteration = 10;
 
-class Main extends React.Component<*>{
+class Main extends Component{
     state={
-        grid: Array(maxRows).fill().map(() => Array(maxCols).fill(false))
+        grid: Array(maxRows).fill().map(() => Array(maxCols).fill(false)),
+        iteration: 0,
     };
 
     componentDidMount(){
         this.initializeGrid();
-        setInterval(this.nextStep, intervalTime);
+        this.interval = setInterval(this.nextStep, intervalTime);
     }
 
     initializeGrid = () => {
@@ -42,40 +44,48 @@ class Main extends React.Component<*>{
     }
 
     nextStep = () => {
-        const {grid} = this.state;
+        const {grid, iteration} = this.state;
         const newGrid = cloneObject(grid);
 
         for (let i = 0 ; i < maxRows ; i++){
             for(let j = 0 ; j < maxCols ; j++){
-                let neighbors = 0
-                //Count neighbors
-                if (i < maxRows - 1) if (grid[i + 1][j]) neighbors++; //right neighbor
-                if (i > 1) if (grid[i - 1 ][j]) neighbors++; //left neighbor
-                if (j > 0) if (grid[j][j + 1]) neighbors++; //bottom neighbor
-                if (j > 1) if (grid[j][j - 1 ]) neighbors++; //top neighbor
+                let neighbors = 0;
 
+                if (i < maxRows - 1 && grid[i + 1][j]) neighbors++;
+                if (i > 0  && grid[i - 1][j]) neighbors++;
+                if (j < maxCols - 1 && grid[i][j + 1]) neighbors++;
+                if (j > 0 && grid[i][j - 1]) neighbors++;
+                if (i > 0 && j > 0 && grid[i - 1][j - 1]) neighbors++;
+                if (i < maxRows - 1 && j > 0 && grid[i + 1][j - 1]) neighbors++;
+                if (i > 0 && j < maxCols - 1 && grid[i - 1][j + 1]) neighbors++;
+                if (i < maxRows -1 && j < maxCols -1 && grid[i + 1][j + 1]) neighbors++;
                 // Any live cell with fewer than two live neighbors dies, as if by under population.
-                if(newGrid[i][j] && neighbors < 2) newGrid[i][j] = false;
-                // Any live cell with two or three live neighbors lives on to the next generation.
-                if(newGrid[i][j] && neighbors === 2 || neighbors === 3) newGrid[i][j] = true;
                 // Any live cell with more than three live neighbors dies, as if by overpopulation.
-                if(!newGrid[i][j] && neighbors === 3) newGrid[i][j] = true;
-                //Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+                if(grid[i][j]) if(neighbors < 2 || neighbors > 3 ) newGrid[i][j] = false;
+                // Any live cell with two or three live neighbors lives on to the next generation.
+                if(grid[i][j]) if(neighbors === 2 || neighbors === 3) newGrid[i][j] = true;
+                // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+                if(neighbors === 3 && !grid[i][j]) newGrid[i][j] = true;
             }
         }
-        this.setState({grid:newGrid});
+        this.setState({
+            grid: newGrid,
+            iteration: iteration + 1
+        });
+
+        if ( iteration + 1 === maxIteration ){
+            clearInterval(this.interval);
+        }
     }
 
     render(){
         const {grid} = this.state;
         return(
-            <div>
-                <Grid
-                    grid={grid}
-                    rows={maxRows}
-                    cols={maxCols}
-                /> 
-            </div>
+            <Grid
+                grid={grid}
+                rows={maxRows}
+                cols={maxCols}
+            /> 
         );
     }
 }

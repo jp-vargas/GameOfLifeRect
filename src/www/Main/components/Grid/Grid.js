@@ -2,7 +2,7 @@
  * Grid Component
  */
 
-import * as React from "react";
+import React from "react";
 
 // components
 import Cell from "../Cell/Cell.js";
@@ -17,7 +17,7 @@ const Grid = (props) => {
 
     for(let i = 0; i < rows; i++){
         for(let j = 0; j < cols; j++){
-            const cellId = `${i}${j}`;
+            const cellId = `${i}"-"${j}`;
 
             rowsArray.push(
                 <Cell
