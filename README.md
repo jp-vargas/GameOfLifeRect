@@ -13,3 +13,8 @@ Run
 1. Inside the repository run the next line:
 `yarn start`
 2. Open `http://localhost:3000/`
+
+Test
+-----------------------------------------------------------------------------
+1. Inside the repository run the next line:
+`yarn test`
