@@ -1,4 +1,4 @@
-# GameOfLifeRect
+# GameOfLifeReact
 Game of life made with react
 
 Installation
